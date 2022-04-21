@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  wb_app:
+    build: ./wb_app
+    command: python ./src/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
