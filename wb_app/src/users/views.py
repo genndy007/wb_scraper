@@ -44,7 +44,37 @@ class LoginView(APIView):
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
-            'success': 'logged in, jwt cookie set'
+            'message': 'logged in'
+        }
+
+        return response
+
+
+class UserView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            raise AuthenticationFailed('You need to authenticate first - /login')
+
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256', ])
+        except:
+            raise AuthenticationFailed('You need to authenticate first - /login')
+
+        user_id = payload['id']
+        user = User.objects.filter(id=user_id).first()
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            'message': 'logged out'
         }
 
         return response
