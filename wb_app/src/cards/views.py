@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from django.conf import settings
 import jwt
+
+from scrape.utils import get_all_good_info
 
 from .models import Card
 
@@ -13,12 +15,12 @@ from .serializers import CardSerializer
 def is_jwt_authenticated(request, secret_key):
     token = request.COOKIES.get('jwt')
     if not token:
-        raise AuthenticationFailed('You need to authenticate first - /login')
+        raise AuthenticationFailed('You need to authenticate first - login')
 
     try:
         payload = jwt.decode(token, secret_key, algorithms=['HS256', ])
     except:
-        raise AuthenticationFailed('You need to authenticate first - /login')
+        raise AuthenticationFailed('You need to authenticate first - login')
 
     return payload
 
@@ -40,9 +42,21 @@ class AllCardsView(APIView):
         payload = is_jwt_authenticated(request, settings.SECRET_KEY)
         user_id = payload['id']
 
+        articul = request.data.get('articul')
+        if not articul:
+            raise ValidationError('Need articul field')
+
+        if not articul.isdigit():
+            raise ValidationError('Articul must be a number')
+
+        good_info = get_all_good_info(articul)
+
+        if not good_info:
+            raise ValidationError('Non-existing articul')
+
         data = {
             'user_id': user_id,
-            **request.data,
+            **good_info,
         }
         serializer = CardSerializer(data=data)
         serializer.is_valid(raise_exception=True)
