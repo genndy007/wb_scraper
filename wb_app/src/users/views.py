@@ -6,6 +6,8 @@ from django.conf import settings
 import jwt
 import datetime
 
+from auth.auth import is_jwt_authenticated
+
 from .serializers import UserSerializer
 from .models import User
 
@@ -52,15 +54,7 @@ class LoginView(APIView):
 
 class UserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('jwt')
-
-        if not token:
-            raise AuthenticationFailed('You need to authenticate first - /login')
-
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256', ])
-        except:
-            raise AuthenticationFailed('You need to authenticate first - /login')
+        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
 
         user_id = payload['id']
         user = User.objects.filter(id=user_id).first()

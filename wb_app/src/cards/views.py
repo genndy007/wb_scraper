@@ -1,28 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework.exceptions import ValidationError
 from django.conf import settings
-import jwt
+
 
 from scrape.utils import get_all_good_info
+from auth.auth import is_jwt_authenticated
 
 from .models import Card
-
 from .serializers import CardSerializer
 
 # Create your views here.
-
-def is_jwt_authenticated(request, secret_key):
-    token = request.COOKIES.get('jwt')
-    if not token:
-        raise AuthenticationFailed('You need to authenticate first - login')
-
-    try:
-        payload = jwt.decode(token, secret_key, algorithms=['HS256', ])
-    except:
-        raise AuthenticationFailed('You need to authenticate first - login')
-
-    return payload
 
 class AllCardsView(APIView):
     def get(self, request):
