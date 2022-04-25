@@ -25,10 +25,14 @@ def get_supplier(articul: str):
 def get_all_good_info(articul: str):
     articul_clean = articul.strip()
     src = requests.get(BASE_URL_DATA.format(articul_clean)).text
+    print(src)
     soup = BeautifulSoup(src, 'lxml')
 
     header = soup.find('h1', class_='same-part-kt__header')
     prices = soup.find('p', class_='price-block__price-wrap')
+
+    if not header or not prices:
+        return False
 
     spans = [span.text for span in header.find_all('span')]
     brand = spans[0]
