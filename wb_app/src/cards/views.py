@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework import status
 from django.conf import settings
 
 
@@ -49,5 +50,16 @@ class AllCardsView(APIView):
         serializer = CardSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        user_id = payload['id']
+
+        user_cards = Card.objects.filter(user_id=user_id)
+        for card in user_cards:
+            card.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
