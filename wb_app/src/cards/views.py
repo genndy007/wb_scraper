@@ -63,3 +63,15 @@ class AllCardsView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class SingleCardView(APIView):
+    def delete(self, request, pk):
+        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        user_id = payload['id']
+
+        user_card = Card.objects.filter(user_id=user_id).filter(id=pk)
+        user_card.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+

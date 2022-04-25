@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import AllCardsView
+from .views import AllCardsView, SingleCardView
 
 urlpatterns = [
     path('', AllCardsView.as_view()),
-    # path('/<int:pk>',),
-    # path('/<int:pk>/stats',),
+    path('<int:pk>', SingleCardView.as_view()),
+    # path('<int:pk>/stats',),
 ]
