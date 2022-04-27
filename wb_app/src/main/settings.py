@@ -144,3 +144,15 @@ AUTH_USER_MODEL = 'users.User'
 # for frontend, maybe i do not need it
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+# celery regular tasks
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+
+CELERY_BEAT_SCHEDULE = {
+    'update-good-info-every-hour': {
+        'task': 'cards.tasks.get_and_update_good_info',
+        'schedule': 10.0,
+    },
+}
