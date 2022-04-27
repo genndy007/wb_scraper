@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # get env variables
 env = Env()
-env.read_env()
+env.read_env(BASE_DIR / '..' / '..' / '.env')
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
