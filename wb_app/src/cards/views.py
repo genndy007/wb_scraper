@@ -75,7 +75,7 @@ class SingleCardView(APIView):
 
 
 class UpdateInfoView(APIView):
-    def post(self):
+    def get(self):
         pass
 
 

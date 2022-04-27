@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-articul_example = '71875051'
+# articul_example = '71875051'
 
 BASE_URL_DATA = 'https://www.wildberries.ru/catalog/{}/detail.aspx'
 BASE_URL_SELLER = 'https://wbx-content-v2.wbstatic.net/sellers/{}.json'
@@ -25,7 +25,6 @@ def get_supplier(articul: str):
 def get_all_good_info(articul: str):
     articul_clean = articul.strip()
     src = requests.get(BASE_URL_DATA.format(articul_clean)).text
-    print(src)
     soup = BeautifulSoup(src, 'lxml')
 
     header = soup.find('h1', class_='same-part-kt__header')
@@ -58,4 +57,4 @@ def get_all_good_info(articul: str):
 # TESTING ZONE
 
 # info = get_all_good_info(articul_example)
-# print(info)
+
