@@ -14,7 +14,8 @@ class Card(models.Model):
     supplier = models.CharField(max_length=255)
 
 class Record(models.Model):
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
+    articul = models.PositiveBigIntegerField()
     price_without_discount = models.PositiveIntegerField()
     price_with_discount = models.PositiveIntegerField()
+    supplier = models.CharField(max_length=255)
     record_date = models.DateTimeField(auto_now_add=True)
