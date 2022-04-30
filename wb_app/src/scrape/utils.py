@@ -31,7 +31,7 @@ def get_all_good_info(articul: str):
     prices = soup.find('p', class_='price-block__price-wrap')
 
     if not header or not prices:
-        return False
+        return {}
 
     spans = [span.text for span in header.find_all('span')]
     brand = spans[0]
