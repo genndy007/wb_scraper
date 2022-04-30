@@ -153,6 +153,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     'update-good-info-every-hour': {
         'task': 'cards.tasks.get_and_update_good_info',
-        'schedule': 10.0,
+        'schedule': 30.0,
     },
 }

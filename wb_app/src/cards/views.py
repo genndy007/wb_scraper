@@ -9,7 +9,7 @@ from scrape.utils import get_all_good_info
 from auth.auth import is_jwt_authenticated
 
 from .models import Card
-from .serializers import CardSerializer
+from .serializers import CardSerializer, RecordSerializer
 
 # Create your views here.
 
@@ -74,9 +74,26 @@ class SingleCardView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UpdateInfoView(APIView):
-    def get(self):
-        pass
+# class UpdateInfoView(APIView):
+#     def get(self, request):
+#         all_articuls = list(Card.objects.values_list('articul', flat=True))
+#         print(all_articuls)
+#
+#
+#         for articul in all_articuls:
+#             good_info = get_all_good_info(str(articul))
+#
+#             for key in 'goods_name', 'brand':
+#                 good_info.pop(key)
+#
+#             serializer = RecordSerializer(data=good_info)
+#             serializer.is_valid(raise_exception=True)
+#             serializer.save()
+#
+#
+#
+#
+#         return Response(status=status.HTTP_200_OK)
 
 
 
