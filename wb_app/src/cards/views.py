@@ -8,9 +8,8 @@ from django.conf import settings
 from scrape.utils import get_all_good_info
 from auth.auth import is_jwt_authenticated
 
-from .models import Card
+from .models import Card, Record
 from .serializers import CardSerializer, RecordSerializer
-from .tasks import get_and_update_good_info
 from main.celery import celery_app
 
 # Create your views here.
@@ -84,4 +83,28 @@ class UpdateInfoView(APIView):
 
 class CardStatsView(APIView):
     def get(self, request, pk):
-        return Response(self.request.query_params)
+        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        user_id = payload['id']
+        user_card = Card.objects.filter(id=pk).first()
+
+        if not user_card:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if not user_card.id == user_id:
+            print('Its not your card')
+            return Response('Its not your card', status.HTTP_403_FORBIDDEN)
+
+        records = Record.objects.filter(articul=user_card.articul)
+
+        response = {
+            'articul': user_card.articul,
+            'stats': [],
+        }
+        for record in records:
+            response['stats'].append({
+                'record_date': record.record_date,
+                'price_without_discount': record.price_without_discount,
+                'price_with_discount': record.price_with_discount,
+            })
+
+        return Response(response)
