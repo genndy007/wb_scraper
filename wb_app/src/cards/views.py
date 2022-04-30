@@ -10,6 +10,8 @@ from auth.auth import is_jwt_authenticated
 
 from .models import Card
 from .serializers import CardSerializer, RecordSerializer
+from .tasks import get_and_update_good_info
+from main.celery import celery_app
 
 # Create your views here.
 
@@ -74,26 +76,12 @@ class SingleCardView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# class UpdateInfoView(APIView):
-#     def get(self, request):
-#         all_articuls = list(Card.objects.values_list('articul', flat=True))
-#         print(all_articuls)
-#
-#
-#         for articul in all_articuls:
-#             good_info = get_all_good_info(str(articul))
-#
-#             for key in 'goods_name', 'brand':
-#                 good_info.pop(key)
-#
-#             serializer = RecordSerializer(data=good_info)
-#             serializer.is_valid(raise_exception=True)
-#             serializer.save()
-#
-#
-#
-#
-#         return Response(status=status.HTTP_200_OK)
+class UpdateInfoView(APIView):
+    def get(self, request):
+        celery_app.send_task('cards.tasks.get_and_update_good_info')
+        return Response(status=status.HTTP_200_OK)
 
 
-
+class CardStatsView(APIView):
+    def get(self, request, pk):
+        return Response(self.request.query_params)
