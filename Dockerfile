@@ -1,10 +1,18 @@
 # syntax=docker/dockerfile:1
 FROM python:3
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-WORKDIR /app
-COPY wb_app /app/
-RUN pip install -r requirements.txt
-RUN python ./src/manage.py migrate
+ENV POETRY_VIRTUALENVS_CREATE=false
 
-CMD [ "python", "./src/manage.py", "runserver", "0.0.0.0:8000" ]
+WORKDIR /code
+COPY poetry.lock pyproject.toml /code/
+RUN pip install poetry
+RUN poetry install
+
+COPY src /code/src
+COPY .env.prod /code/.env
+COPY docker-entrypoint.sh /code/docker-entrypoint.sh
+
+
+CMD [ "python", "./src/manage.py", "runserver", "0.0.0.0:8001" ]
