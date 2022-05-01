@@ -1,1 +1,1 @@
-autopep8 --in-place --recursive --max-line-length 120 ./src
+autopep8 --in-place --recursive --max-line-length 120 ./src --exclude migrations
