@@ -52,9 +52,3 @@ def get_all_good_info(articul: str):
         'brand': brand,
         'supplier': supplier
     }
-
-
-# TESTING ZONE
-
-# info = get_all_good_info(articul_example)
-

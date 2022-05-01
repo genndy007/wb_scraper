@@ -17,7 +17,8 @@ def validate_url_query_params(params: dict):
         if end_date is not None:
             check_end_date = datetime.strptime(end_date, '%Y-%m-%d')
     except:
-        raise ValidationError(detail='Query params: start, end: YYYY-MM-DD; interval: int', code=status.HTTP_400_BAD_REQUEST)
+        raise ValidationError(detail='Query params: start, end: YYYY-MM-DD; interval: int',
+                              code=status.HTTP_400_BAD_REQUEST)
 
     return start_date, end_date, interval
 

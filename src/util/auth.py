@@ -1,6 +1,7 @@
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
 
+
 def is_jwt_authenticated(request, secret_key):
     token = request.COOKIES.get('jwt')
     if not token:

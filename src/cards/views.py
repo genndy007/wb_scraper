@@ -15,6 +15,7 @@ from main.celery import celery_app
 
 # Create your views here.
 
+
 class AllCardsView(APIView):
     def get(self, request):
         payload = is_jwt_authenticated(request, settings.SECRET_KEY)
@@ -25,7 +26,6 @@ class AllCardsView(APIView):
         for card in user_cards:
             serializer = CardSerializer(card)
             res.append(serializer.data)
-
 
         return Response(res)
 
@@ -100,7 +100,6 @@ class CardStatsView(APIView):
         records = filter_records(records, start_date, end_date)
         time_to_check, time_last, time_interval = set_time_values(records, interval)
         stats = get_stats_list(records, time_to_check, time_last, time_interval)
-
 
         return Response({
             'articul': user_card.articul,
