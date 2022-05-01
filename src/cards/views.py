@@ -5,11 +5,12 @@ from rest_framework import status
 from django.conf import settings
 
 
-from scrape.utils import get_all_good_info
+from scrape.scrape import get_all_good_info
 from auth.auth import is_jwt_authenticated
+from util.stats import set_time_values, get_stats_list, filter_records, validate_url_query_params
 
 from .models import Card, Record
-from .serializers import CardSerializer, RecordSerializer
+from .serializers import CardSerializer
 from main.celery import celery_app
 
 # Create your views here.
@@ -95,16 +96,14 @@ class CardStatsView(APIView):
             return Response('Its not your card', status.HTTP_403_FORBIDDEN)
 
         records = Record.objects.filter(articul=user_card.articul)
+        start_date, end_date, interval = validate_url_query_params(self.request.query_params)
 
-        response = {
+        records = filter_records(records, start_date, end_date)
+        time_to_check, time_last, time_interval = set_time_values(records, interval)
+        stats = get_stats_list(records, time_to_check, time_last, time_interval)
+
+
+        return Response({
             'articul': user_card.articul,
-            'stats': [],
-        }
-        for record in records:
-            response['stats'].append({
-                'record_date': record.record_date,
-                'price_without_discount': record.price_without_discount,
-                'price_with_discount': record.price_with_discount,
-            })
-
-        return Response(response)
+            'stats': stats,
+        })

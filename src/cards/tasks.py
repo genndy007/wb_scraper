@@ -1,7 +1,7 @@
 from main.celery import celery_app
 from celery import group
 
-from scrape.utils import get_all_good_info
+from scrape.scrape import get_all_good_info
 from .models import Card, Record
 
 
