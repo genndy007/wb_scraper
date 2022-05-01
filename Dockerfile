@@ -8,7 +8,7 @@ ENV POETRY_VIRTUALENVS_CREATE=false
 WORKDIR /code
 COPY poetry.lock pyproject.toml /code/
 RUN pip install poetry
-RUN poetry install
+RUN poetry install --no-dev
 
 COPY src /code/src
 COPY .env.prod /code/.env
