@@ -62,7 +62,7 @@ class AllCardsView(APIView):
         for card in user_cards:
             card.delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response('All cards deleted', status=status.HTTP_204_NO_CONTENT)
 
 
 class SingleCardView(APIView):
@@ -73,13 +73,13 @@ class SingleCardView(APIView):
         user_card = Card.objects.filter(user_id=user_id).filter(id=pk)
         user_card.delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(f'Card with id {pk} deleted', status=status.HTTP_204_NO_CONTENT)
 
 
 class UpdateInfoView(APIView):
     def get(self, request):
         celery_app.send_task('cards.tasks.get_and_update_good_info')
-        return Response(status=status.HTTP_200_OK)
+        return Response('Task for updating is sent', status=status.HTTP_200_OK)
 
 
 class CardStatsView(APIView):
@@ -89,11 +89,10 @@ class CardStatsView(APIView):
         user_card = Card.objects.filter(id=pk).first()
 
         if not user_card:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(f'Card with id {pk} not found', status=status.HTTP_404_NOT_FOUND)
 
         if not user_card.id == user_id:
-            print('Its not your card')
-            return Response('Its not your card', status.HTTP_403_FORBIDDEN)
+            return Response('It is not your card', status.HTTP_403_FORBIDDEN)
 
         records = Record.objects.filter(articul=user_card.articul)
         start_date, end_date, interval = validate_url_query_params(self.request.query_params)
