@@ -5,8 +5,8 @@ from rest_framework import status
 from django.conf import settings
 
 
-from scrape.scrape import get_all_good_info
-from auth.auth import is_jwt_authenticated
+from util.scrape import get_all_good_info
+from util.auth import is_jwt_authenticated
 from util.stats import set_time_values, get_stats_list, filter_records, validate_url_query_params
 
 from .models import Card, Record

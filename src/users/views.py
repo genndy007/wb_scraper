@@ -6,7 +6,7 @@ from django.conf import settings
 import jwt
 import datetime
 
-from auth.auth import is_jwt_authenticated
+from util.auth import is_jwt_authenticated
 
 from .serializers import UserSerializer
 from .models import User
