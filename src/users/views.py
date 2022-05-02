@@ -56,17 +56,16 @@ class LoginView(APIView):
 class UserView(APIView):
     def get(self, request):
         payload = is_jwt_authenticated(request, settings.SECRET_KEY)
-
         user_id = payload['id']
         user = User.objects.filter(id=user_id).first()
         serializer = UserSerializer(user)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LogoutView(APIView):
     def post(self, request):
-        response = Response()
+        response = Response(status=status.HTTP_200_OK)
         response.delete_cookie('jwt')
         response.data = {
             'message': 'logged out'
