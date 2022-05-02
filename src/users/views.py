@@ -27,7 +27,7 @@ class LoginView(APIView):
         password = request.data.get('password', None)
 
         if not login or not password:
-            raise AuthenticationFailed("Insufficient credentials, need login and password")
+            raise AuthenticationFailed('Insufficient credentials, need login and password')
 
         user = User.objects.filter(login=login).first()
         if user is None:
@@ -44,7 +44,7 @@ class LoginView(APIView):
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 
-        response = Response()
+        response = Response(status=status.HTTP_200_OK)
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
             'message': 'logged in'
