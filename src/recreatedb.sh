@@ -1,5 +1,7 @@
-dropdb wb_app -U postgres
-createdb wb_app -O postgres -U postgres
+DB_NAME=wb_app
+
+dropdb $DB_NAME -U postgres
+createdb $DB_NAME -O postgres -U postgres
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
