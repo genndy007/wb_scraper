@@ -15,6 +15,7 @@ djangorestframework = "^3.13.1"
 PyJWT = "^2.3.0"
 django-environ = "^0.8.1"
 django-cors-headers = "^3.11.0"
+lxml = "^4.8.0"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.6.0"
