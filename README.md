@@ -45,14 +45,16 @@ docker-compose up
 
 I hope I would add Swagger interactive documentation
 
-User authentication
+#### User authentication
 |Request               | Definition                |
 |----------------------|---------------------------|
 |POST /users/register/ | Register a new user       |
 |POST /users/login/    | Login into account        |
 |GET /users/me/        | Check yourself logged in  |
 |POST /users/logout/   | Log out                   | 
-Cards CRUD
+
+
+####Cards CRUD
 |Request                                                         |Definition           |
 |----------------------------------------------------------------|---------------------|
 |POST /cards/                                                    | Add new card        |
