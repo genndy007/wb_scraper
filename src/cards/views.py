@@ -2,11 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
-from django.conf import settings
 
 
 from util.scrape import get_all_good_info
-from util.auth import is_jwt_authenticated
+from users.auth import authenticate_jwt
 from util.stats import set_time_values, get_stats_list, filter_records, validate_url_query_params
 
 from .models import Card, Record
@@ -18,7 +17,7 @@ from main.celery import celery_app
 
 class AllCardsView(APIView):
     def get(self, request):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        payload = authenticate_jwt(request)
         user_id = payload['id']
         user_cards = Card.objects.filter(user_id=user_id)
 
@@ -30,7 +29,7 @@ class AllCardsView(APIView):
         return Response(res)
 
     def post(self, request):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        payload = authenticate_jwt(request)
         user_id = payload['id']
 
         articul = request.data.get('articul')
@@ -55,7 +54,7 @@ class AllCardsView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        payload = authenticate_jwt(request)
         user_id = payload['id']
 
         user_cards = Card.objects.filter(user_id=user_id)
@@ -67,7 +66,7 @@ class AllCardsView(APIView):
 
 class SingleCardView(APIView):
     def delete(self, request, pk):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        payload = authenticate_jwt(request)
         user_id = payload['id']
 
         user_card = Card.objects.filter(user_id=user_id).filter(id=pk)
@@ -84,7 +83,7 @@ class UpdateInfoView(APIView):
 
 class CardStatsView(APIView):
     def get(self, request, pk):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
+        payload = authenticate_jwt(request)
         user_id = payload['id']
         user_card = Card.objects.filter(id=pk).first()
 
