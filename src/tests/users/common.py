@@ -1,1 +1,1 @@
-URL_PREFIX='/users'
+URL_PREFIX = '/users'
