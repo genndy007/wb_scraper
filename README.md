@@ -17,6 +17,12 @@ about cost changes in certain period of time.
 
 Download project to your computer, change to project directory, then:
 
+#### End user run
+```sh
+# Run with sudo because of docker-compose usage
+sudo ./build-n-run.sh
+```
+
 #### Build with hands
 ```sh
 # Run with Python3, PostgreSQL and Celery[RabbitMQ]
@@ -37,6 +43,7 @@ poetry run celery -A main worker -B -l INFO   # celery tasks worker
 
 #### Compose
 ```sh
+# root privileges
 docker-compose build
 docker-compose up
 ```
