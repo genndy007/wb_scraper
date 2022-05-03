@@ -3,7 +3,6 @@ from rest_framework import status
 from .common import URL_PREFIX
 
 
-
 @pytest.mark.django_db
 def test_register_user(client, user_data):
     response = client.post(f'{URL_PREFIX}/register/', user_data)
@@ -61,6 +60,3 @@ def test_logout_user(auth_client):
     assert response.status_code == status.HTTP_200_OK
     assert auth_client.cookies.get('jwt').coded_value == '""'
     assert response.data['message'] == 'logged out'
-
-
-

@@ -42,6 +42,3 @@ def authenticate_jwt(request):
         raise AuthenticationFailed(dict(message='You need to authenticate first - login'))
 
     return payload
-
-
-

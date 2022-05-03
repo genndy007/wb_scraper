@@ -26,6 +26,7 @@ def cards_in_db(auth_client):
         supplier='Adidas',
     )
 
+
 @pytest.fixture()
 def records_in_db(auth_client):
     Record.objects.create(

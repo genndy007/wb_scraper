@@ -11,6 +11,7 @@ from .common import URL_PREFIX
 #         price_with_discount=800,
 #         supplier='Reebok',
 
+
 @pytest.mark.django_db
 def test_all_cards_get(auth_client):
     response = auth_client.get(f'{URL_PREFIX}/')
@@ -138,10 +139,3 @@ def test_cards_stats(auth_client, records_in_db):
     assert response.status_code == status.HTTP_200_OK
     assert type(response.data.get('articul')) is int
     assert type(response.data.get('stats')) is list
-
-
-
-
-
-
-
