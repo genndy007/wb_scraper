@@ -1,6 +1,19 @@
-version: '3.9'
+version: "3.9"
 
 services:
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
+  celeryworker:
+    build: .
+    working_dir: /code/src
+    command: celery -A main worker -B -l INFO
+    depends_on:
+      - rabbitmq
+
   db:
     image: postgres
     expose:
@@ -20,5 +33,6 @@ services:
     entrypoint: ./docker-entrypoint.sh
     depends_on:
       - db
+
 
 
