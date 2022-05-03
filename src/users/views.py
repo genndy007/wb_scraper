@@ -1,20 +1,31 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
-from django.conf import settings
 
-import jwt
-import datetime
-
-from util.auth import is_jwt_authenticated
-
+from users.auth import authenticate_jwt, validate_login_password, generate_jwt_token
 from .serializers import UserSerializer
 from .models import User
 
 
 class RegisterView(APIView):
     def post(self, request):
+        """Register a new user
+        Args:
+            request.data = {
+                "email": email-str,
+                "login": str,
+                "password": str,
+            }
+        Returns:
+            response.data = {
+                "id": int,
+                "email": email-str,
+                "login": str,
+            }
+            response.status_code = 201
+        Raises:
+            ValidationError: request.data is insufficient
+        """
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -23,40 +34,50 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
+        """Login into account
+        Args:
+            request.data = {
+                "login": str,
+                "password": str,
+            }
+        Returns:
+            response.data = {
+                "message": str
+            }
+            response.status_code = 200
+            cookie: jwt
+        Raises:
+            AuthenticationFailed: Insufficient credentials
+        """
         login = request.data.get('login', None)
         password = request.data.get('password', None)
+        user = validate_login_password(login, password)
+        token = generate_jwt_token(user)
 
-        if not login or not password:
-            raise AuthenticationFailed('Insufficient credentials, need login and password')
-
-        user = User.objects.filter(login=login).first()
-        if user is None:
-            raise AuthenticationFailed('User not found')
-
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
-
-        time_now = datetime.datetime.utcnow()
-        payload = {
-            'id': user.id,
-            'exp': time_now + datetime.timedelta(minutes=60),
-            'iat': time_now,
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-
-        response = Response(status=status.HTTP_200_OK)
+        response = Response(dict(message='logged in'), status=status.HTTP_200_OK)
         response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {
-            'message': 'logged in'
-        }
 
         return response
 
 
 class UserView(APIView):
     def get(self, request):
-        payload = is_jwt_authenticated(request, settings.SECRET_KEY)
-        user_id = payload['id']
+        """Check your account
+        Args:
+            request.COOKIES = {
+                "jwt": str
+            }
+        Returns:
+            response.data = {
+                "id": int,
+                "email": email-str,
+                "login": str,
+            }
+        Raises:
+            AuthenticationFailed: Insufficient credentials
+        """
+        payload = authenticate_jwt(request)
+        user_id = payload.get('id')
         user = User.objects.filter(id=user_id).first()
         serializer = UserSerializer(user)
 
@@ -65,10 +86,21 @@ class UserView(APIView):
 
 class LogoutView(APIView):
     def post(self, request):
-        response = Response(status=status.HTTP_200_OK)
+        """Log out, delete cookie
+        Args:
+            request.COOKIES = {
+                "jwt": str
+            }
+        Returns:
+            response.data = {
+                "message": str
+            }
+            delete request.COOKIES['jwt']
+        Raises:
+            AuthenticationFailed: User is not authenticated
+        """
+        payload = authenticate_jwt(request)
+        response = Response(dict(message='logged out'), status=status.HTTP_200_OK)
         response.delete_cookie('jwt')
-        response.data = {
-            'message': 'logged out'
-        }
 
         return response

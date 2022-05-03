@@ -31,7 +31,7 @@ def generate_jwt_token(user) -> str:
     return token
 
 
-def is_jwt_authenticated(request):
+def authenticate_jwt(request):
     token = request.COOKIES.get('jwt')
     if not token:
         raise AuthenticationFailed('You need to authenticate first - login')
