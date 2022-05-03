@@ -91,8 +91,8 @@ class CardStatsView(APIView):
         if not user_card:
             return Response(f'Card with id {pk} not found', status=status.HTTP_404_NOT_FOUND)
 
-        if not user_card.id == user_id:
-            return Response('It is not your card', status.HTTP_403_FORBIDDEN)
+        if not user_card.user_id == user_id:
+            return Response(f'It is not your card: {user_card.user_id}, {user_id}', status.HTTP_403_FORBIDDEN)
 
         records = Record.objects.filter(articul=user_card.articul)
         start_date, end_date, interval = validate_url_query_params(self.request.query_params)

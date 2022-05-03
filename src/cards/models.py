@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Card(models.Model):
-    user_id = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    user_id = models.PositiveIntegerField()
     articul = models.PositiveBigIntegerField()
     brand = models.CharField(max_length=255)
     goods_name = models.CharField(max_length=255)
