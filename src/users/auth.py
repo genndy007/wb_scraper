@@ -8,14 +8,14 @@ from users.models import User
 
 def validate_login_password(login: str, password: str):
     if not login or not password:
-        raise AuthenticationFailed('Insufficient credentials, need login and password')
+        raise AuthenticationFailed(dict(message='Insufficient credentials, need login and password'))
 
     user = User.objects.filter(login=login).first()
     if user is None:
-        raise AuthenticationFailed('User not found')
+        raise AuthenticationFailed(dict(message='User not found'))
 
     if not user.check_password(password):
-        raise AuthenticationFailed('Incorrect password')
+        raise AuthenticationFailed(dict(message='Incorrect password'))
 
     return user
 
@@ -34,12 +34,12 @@ def generate_jwt_token(user) -> str:
 def authenticate_jwt(request):
     token = request.COOKIES.get('jwt')
     if not token:
-        raise AuthenticationFailed('You need to authenticate first - login')
+        raise AuthenticationFailed(dict(message='You need to authenticate first - login'))
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256', ])
     except:
-        raise AuthenticationFailed('You need to authenticate first - login')
+        raise AuthenticationFailed(dict(message='You need to authenticate first - login'))
 
     return payload
 
